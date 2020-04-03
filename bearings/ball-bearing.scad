@@ -5,44 +5,7 @@
  * Neeraj Verma April 2020
  */
 
-
-module bearing_profile(
-  inner_diameter, 
-  outer_diameter, 
-  inner_size, 
-  outer_size,
-  width,
-  bearing_size,
-  dust_covers=false
-  )
-{
-  
-  $fn=50;
-
-  difference() 
-  {
-    union()
-    {
-      translate([inner_size/2+inner_diameter/2,0,0]) 
-        square([inner_size,width], center = true);
-      
-      translate([inner_size/2+outer_diameter/2,0,0]) 
-        square([outer_size,width], center = true);
-
-      if(dust_covers) translate([inner_diameter/2+inner_size,width/2-1.2,0]) 
-        square([4.5,1]);
-
-      if(dust_covers) mirror([0,1,0]) translate([inner_diameter/2+inner_size,width/2-1.2,0]) 
-        square([4.5,1]);
-
-    }  
-    translate([inner_size/2+inner_diameter/2+bearing_size/2+inner_size-.4,0,0]) 
-      circle( bearing_size);
-  }  
-}
-
-
-module bearing(
+module 3dpp_ball_bearing(
   inner_diameter = 8, 
   outer_diameter=22, 
   inner_size = 2.5, 
@@ -54,7 +17,26 @@ module bearing(
   $fn=50;
   rotate_extrude() 
   {
-      bearing_profile(inner_diameter,outer_diameter,inner_size,outer_size,width,bearing_size,dust_covers);
+    difference() 
+    {
+      union()
+      {
+        translate([inner_size/2+inner_diameter/2,0,0]) 
+          square([inner_size,width], center = true);
+        
+        translate([inner_size/2+outer_diameter/2,0,0]) 
+          square([outer_size,width], center = true);
+
+        if(dust_covers) translate([inner_diameter/2+inner_size,width/2-1.2,0]) 
+          square([4.5,1]);
+
+        if(dust_covers) mirror([0,1,0]) translate([inner_diameter/2+inner_size,width/2-1.2,0]) 
+          square([4.5,1]);
+
+      }  
+      translate([inner_size/2+inner_diameter/2+bearing_size/2+inner_size-.4,0,0]) 
+        circle( bearing_size);
+    }
   }
 
   if(!dust_covers) {
@@ -71,13 +53,14 @@ module bearing(
 
 }
 
-inner_diameter = 8; 
-outer_diameter=22; 
-inner_size = 2.5; 
-outer_size = 2.5;
-bearing_size = 2.8;
-width = 7;
+/**
+ * The following module will help you cut holes for the axle.
+ * Pass in an optional length to specify depth of the cut.
+ **/
+module 3dpp_ball_bearing_cut(length=10) {
+  cylinder(d=8, h=length, center=true);
+}
 
-bearing(dust_covers=true);
-//bearing_profile(inner_diameter,outer_diameter,inner_size,outer_size,width,bearing_size, dust_covers=true);
+3dpp_ball_bearing(dust_covers=true);
+//#3dpp_ball_bearing_cut(20);
 
